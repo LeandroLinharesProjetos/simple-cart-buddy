@@ -1,0 +1,21 @@
+
+{
+  "app": {
+    "title": "Shopping List"
+  },
+  "addItem": {
+    "placeholder": "Add new item...",
+    "button": "Add"
+  },
+  "shoppingList": {
+    "emptyTitle": "Your shopping list is empty",
+    "emptyDescription": "Add items to get started",
+    "toBuy": "Items to Buy",
+    "purchased": "Purchased"
+  },
+  "languages": {
+    "pt": "Portuguese",
+    "en": "English",
+    "es": "Spanish"
+  }
+}

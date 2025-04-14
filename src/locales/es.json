@@ -1,0 +1,21 @@
+
+{
+  "app": {
+    "title": "Lista de Compras"
+  },
+  "addItem": {
+    "placeholder": "Agregar nuevo artículo...",
+    "button": "Agregar"
+  },
+  "shoppingList": {
+    "emptyTitle": "Tu lista de compras está vacía",
+    "emptyDescription": "Agrega artículos para comenzar",
+    "toBuy": "Artículos para Comprar",
+    "purchased": "Comprados"
+  },
+  "languages": {
+    "pt": "Portugués",
+    "en": "Inglés",
+    "es": "Español"
+  }
+}
