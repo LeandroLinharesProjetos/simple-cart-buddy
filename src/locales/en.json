@@ -22,5 +22,13 @@
     "pt": "Portuguese",
     "en": "English",
     "es": "Spanish"
+  },
+  "share": {
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "linkedin": "LinkedIn",
+    "whatsapp": "WhatsApp",
+    "text": "Check out my shopping list!",
+    "copied": "Link copied to clipboard!"
   }
 }

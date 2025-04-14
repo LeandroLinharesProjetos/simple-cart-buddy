@@ -6,6 +6,7 @@ import ShoppingList from "@/components/ShoppingList";
 import AddItemForm from "@/components/AddItemForm";
 import LanguageSelector from "@/components/LanguageSelector";
 import FilterMenu from "@/components/FilterMenu";
+import ShareMenu from "@/components/ShareMenu";
 import { ShoppingBasket } from "lucide-react";
 
 const Index = () => {
@@ -21,7 +22,10 @@ const Index = () => {
                 <ShoppingBasket className="h-6 w-6 text-teal-500 mr-2" />
                 <h1 className="text-2xl font-bold text-gray-800">{t('app.title')}</h1>
               </div>
-              <LanguageSelector />
+              <div className="flex items-center gap-1">
+                <ShareMenu />
+                <LanguageSelector />
+              </div>
             </header>
             
             <AddItemForm />

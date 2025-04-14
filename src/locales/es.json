@@ -17,5 +17,18 @@
     "pt": "Portugués",
     "en": "Inglés",
     "es": "Español"
+  },
+  "filterMenu": {
+    "all": "Todos",
+    "pending": "Pendientes",
+    "completed": "Comprados"
+  },
+  "share": {
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "linkedin": "LinkedIn",
+    "whatsapp": "WhatsApp",
+    "text": "¡Mira mi lista de compras!",
+    "copied": "¡Enlace copiado al portapapeles!"
   }
 }
