@@ -8,8 +8,13 @@ export interface ShoppingItem {
   completed: boolean;
 }
 
+type FilterType = "all" | "pending" | "completed";
+
 interface ShoppingListContextType {
   items: ShoppingItem[];
+  filter: FilterType;
+  setFilter: (filter: FilterType) => void;
+  filteredItems: ShoppingItem[];
   addItem: (name: string) => void;
   removeItem: (id: string) => void;
   toggleItemCompletion: (id: string) => void;
@@ -35,6 +40,7 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     { id: "2", name: "Bread", completed: false },
     { id: "3", name: "Eggs", completed: false },
   ]);
+  const [filter, setFilter] = useState<FilterType>("all");
 
   const addItem = (name: string) => {
     if (!name.trim()) return;
@@ -66,8 +72,18 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     );
   };
 
+  const filteredItems = items.filter(item => {
+    if (filter === "all") return true;
+    if (filter === "pending") return !item.completed;
+    if (filter === "completed") return item.completed;
+    return true;
+  });
+
   const value = {
     items,
+    filter,
+    setFilter,
+    filteredItems,
     addItem,
     removeItem,
     toggleItemCompletion,

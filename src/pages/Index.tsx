@@ -5,6 +5,7 @@ import { ShoppingListProvider } from "@/context/ShoppingListContext";
 import ShoppingList from "@/components/ShoppingList";
 import AddItemForm from "@/components/AddItemForm";
 import LanguageSelector from "@/components/LanguageSelector";
+import FilterMenu from "@/components/FilterMenu";
 import { ShoppingBasket } from "lucide-react";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
             </header>
             
             <AddItemForm />
+            <FilterMenu />
             <ShoppingList />
           </div>
         </div>

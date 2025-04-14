@@ -13,6 +13,11 @@
     "toBuy": "Items to Buy",
     "purchased": "Purchased"
   },
+  "filterMenu": {
+    "all": "All",
+    "pending": "Pending",
+    "completed": "Purchased"
+  },
   "languages": {
     "pt": "Portuguese",
     "en": "English",
