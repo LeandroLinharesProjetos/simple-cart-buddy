@@ -7,7 +7,7 @@ import AddItemForm from "@/components/AddItemForm";
 import LanguageSelector from "@/components/LanguageSelector";
 import FilterMenu from "@/components/FilterMenu";
 import ShareMenu from "@/components/ShareMenu";
-import { ShoppingBasket } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ const Index = () => {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <header className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <ShoppingBasket className="h-6 w-6 text-teal-500 mr-2" />
+                <ShoppingBag className="h-6 w-6 text-teal-500 mr-2" />
                 <h1 className="text-2xl font-bold text-gray-800">{t('app.title')}</h1>
               </div>
               <div className="flex items-center gap-1">

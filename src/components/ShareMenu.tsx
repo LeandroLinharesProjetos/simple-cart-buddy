@@ -7,7 +7,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Share2, Facebook, Twitter, Linkedin, MessageCircle } from "lucide-react";
+import { Share2, FacebookIcon, TwitterIcon, LinkedinIcon, MessageCircleMore } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,24 +53,24 @@ const ShareMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Share2 className="h-4 w-4 text-teal-500" />
+          <Share2 className="h-5 w-5 text-teal-500 hover:text-teal-600 transition-colors" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => shareToNetwork('facebook')}>
-          <Facebook className="h-4 w-4 mr-2" />
+          <FacebookIcon className="h-4 w-4 mr-2 text-blue-600" />
           {t('share.facebook')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => shareToNetwork('twitter')}>
-          <Twitter className="h-4 w-4 mr-2" />
+          <TwitterIcon className="h-4 w-4 mr-2 text-sky-500" />
           {t('share.twitter')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => shareToNetwork('linkedin')}>
-          <Linkedin className="h-4 w-4 mr-2" />
+          <LinkedinIcon className="h-4 w-4 mr-2 text-blue-700" />
           {t('share.linkedin')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => shareToNetwork('whatsapp')}>
-          <MessageCircle className="h-4 w-4 mr-2" />
+          <MessageCircleMore className="h-4 w-4 mr-2 text-green-500" />
           {t('share.whatsapp')}
         </DropdownMenuItem>
       </DropdownMenuContent>

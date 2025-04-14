@@ -7,7 +7,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Globe } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 import { Button } from "./ui/button";
 
 const LanguageSelector = () => {
@@ -21,7 +21,7 @@ const LanguageSelector = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Globe className="h-4 w-4 text-teal-500" />
+          <GlobeIcon className="h-5 w-5 text-teal-500 hover:text-teal-600 transition-colors" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
