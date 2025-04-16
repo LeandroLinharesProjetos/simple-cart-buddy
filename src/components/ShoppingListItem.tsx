@@ -1,8 +1,10 @@
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useShoppingList } from "@/context/ShoppingListContext";
-import { Check, Trash, GripVertical, Store } from "lucide-react";
+import { Check, Trash, GripVertical, Store, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface ShoppingListItemProps {
   id: string;
@@ -11,10 +13,26 @@ interface ShoppingListItemProps {
   price?: number;
   store?: string;
   address?: string;
+  bestPrice?: number;
+  purchaseDate?: string;
 }
 
-const ShoppingListItem = ({ id, name, completed, price, store }: ShoppingListItemProps) => {
+const ShoppingListItem = ({ 
+  id, 
+  name, 
+  completed, 
+  price, 
+  store, 
+  bestPrice, 
+  purchaseDate 
+}: ShoppingListItemProps) => {
+  const { t } = useTranslation();
   const { toggleItemCompletion, removeItem } = useShoppingList();
+
+  // Format date if available
+  const formattedDate = purchaseDate 
+    ? format(new Date(purchaseDate), 'dd/MM/yyyy')
+    : '';
 
   return (
     <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg mb-2 bg-white hover:shadow-sm transition-shadow">
@@ -43,19 +61,26 @@ const ShoppingListItem = ({ id, name, completed, price, store }: ShoppingListIte
           >
             {name}
           </span>
-          {(price !== undefined || store) && (
-            <div className="flex items-center text-xs text-gray-500 mt-1">
-              {price !== undefined && (
-                <span className="mr-2">${price.toFixed(2)}</span>
-              )}
-              {store && (
-                <div className="flex items-center">
-                  <Store className="h-3 w-3 mr-1" />
-                  <span>{store}</span>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="flex items-center text-xs text-gray-500 mt-1">
+            {bestPrice !== undefined && (
+              <div className="flex items-center mr-3 text-emerald-600">
+                <ArrowDown className="h-3 w-3 mr-1" />
+                <span>{t('price.best')}: ${bestPrice.toFixed(2)}</span>
+              </div>
+            )}
+            {price !== undefined && !bestPrice && (
+              <span className="mr-3">${price.toFixed(2)}</span>
+            )}
+            {formattedDate && (
+              <span className="mr-3">{formattedDate}</span>
+            )}
+            {store && (
+              <div className="flex items-center">
+                <Store className="h-3 w-3 mr-1" />
+                <span>{store}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <button

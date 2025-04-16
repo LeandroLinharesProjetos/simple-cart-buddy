@@ -25,6 +25,7 @@ const QrCodeScanner = () => {
       // Attempt to parse the QR code data
       // This is a simplified example - real receipt QR codes would have a specific format
       const data = JSON.parse(decodedText);
+      const currentDate = new Date().toISOString();
       
       if (data.items && Array.isArray(data.items)) {
         // Add each item from the receipt
@@ -33,14 +34,15 @@ const QrCodeScanner = () => {
             item.name || 'Unknown item',
             item.price,
             data.store || '',
-            data.address || ''
+            data.address || '',
+            currentDate
           );
         });
         
         toast.success(t('qrcode.itemsAdded', { count: data.items.length }));
       } else {
         // If it's a simple text, just add as an item
-        addItem(decodedText);
+        addItem(decodedText, undefined, '', '', currentDate);
         toast.success(t('qrcode.itemAdded'));
       }
       
@@ -49,7 +51,8 @@ const QrCodeScanner = () => {
       console.error('Failed to parse QR code data:', error);
       
       // If parsing fails, just add as text
-      addItem(decodedText);
+      const currentDate = new Date().toISOString();
+      addItem(decodedText, undefined, '', '', currentDate);
       toast.info(t('qrcode.basicTextAdded'));
       setOpen(false);
     }

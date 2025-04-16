@@ -2,10 +2,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShoppingList } from '@/context/ShoppingListContext';
-import { Store, MapPin, ShoppingBag, Receipt } from 'lucide-react';
+import { Store, MapPin, ShoppingBag, Receipt, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { format } from 'date-fns';
 
 const NotesView = () => {
   const { t } = useTranslation();
@@ -14,19 +15,28 @@ const NotesView = () => {
   // Get unique stores from items with store info
   const storesWithInfo = activeList?.items
     .filter(item => item.store || item.address)
-    .reduce((stores: { store: string; address: string; items: any[] }[], item) => {
+    .reduce((stores: { store: string; address: string; date?: string; items: any[] }[], item) => {
       const store = item.store || t('notes.noStore');
       const address = item.address || t('notes.noAddress');
+      const date = item.purchaseDate;
       
-      // Check if we already have this store in our array
-      const existingStore = stores.find(s => s.store === store && s.address === address);
+      // Create a unique key for grouping by store, address and date
+      const key = `${store}-${address}-${date || ''}`;
       
-      if (existingStore) {
-        existingStore.items.push(item);
+      // Check if we already have this store+date combo in our array
+      const existingStoreIndex = stores.findIndex(s => 
+        s.store === store && 
+        s.address === address && 
+        s.date === date
+      );
+      
+      if (existingStoreIndex >= 0) {
+        stores[existingStoreIndex].items.push(item);
       } else {
         stores.push({
           store,
           address,
+          date,
           items: [item]
         });
       }
@@ -57,6 +67,12 @@ const NotesView = () => {
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="mr-2 h-4 w-4" />
                   {storeInfo.address}
+                </div>
+              )}
+              {storeInfo.date && (
+                <div className="flex items-center text-sm text-gray-500 mt-1">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {format(new Date(storeInfo.date), 'dd/MM/yyyy')}
                 </div>
               )}
             </CardHeader>

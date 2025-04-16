@@ -8,7 +8,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { ShoppingItem } from "@/context/ShoppingListContext";
 
 const ShoppingList = () => {
-  const { filteredItems, filter, reorderItems } = useShoppingList();
+  const { filteredItems, filter, reorderItems, getBestPriceForProduct } = useShoppingList();
   const { t } = useTranslation();
 
   const onDragEnd = (result: any) => {
@@ -31,30 +31,37 @@ const ShoppingList = () => {
               ref={provided.innerRef}
               className="space-y-2"
             >
-              {items.map((item, index) => (
-                <Draggable
-                  key={item.id}
-                  draggableId={item.id}
-                  index={index}
-                  isDragDisabled={!isDraggable}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <ShoppingListItem
-                        id={item.id}
-                        name={item.name}
-                        completed={item.completed}
-                        price={item.price}
-                        store={item.store}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+              {items.map((item, index) => {
+                // Get the best price for this product
+                const bestPrice = getBestPriceForProduct(item.name);
+                
+                return (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.id}
+                    index={index}
+                    isDragDisabled={!isDraggable}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <ShoppingListItem
+                          id={item.id}
+                          name={item.name}
+                          completed={item.completed}
+                          price={item.price}
+                          store={item.store}
+                          bestPrice={bestPrice}
+                          purchaseDate={item.purchaseDate}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              })}
               {provided.placeholder}
             </div>
           )}

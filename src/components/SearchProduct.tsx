@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { useShoppingList } from '@/context/ShoppingListContext';
 
 const SearchProduct = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { addItem } = useShoppingList();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,9 +31,13 @@ const SearchProduct = () => {
     
     setLoading(true);
     try {
-      // Wikipedia API request
+      // Get current language
+      const currentLang = i18n.language || 'en';
+      const langPrefix = currentLang === 'en' ? 'en' : (currentLang === 'es' ? 'es' : 'pt');
+      
+      // Wikipedia API request with language prefix
       const response = await fetch(
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`
+        `https://${langPrefix}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`
       );
       
       if (!response.ok) {
@@ -52,7 +56,9 @@ const SearchProduct = () => {
 
   const handleAddToList = () => {
     if (searchResults) {
-      addItem(searchResults.title, undefined, 'Wikipedia', searchResults.extract);
+      // Add current date when adding from search
+      const currentDate = new Date().toISOString();
+      addItem(searchResults.title, undefined, 'Wikipedia', searchResults.extract, currentDate);
       toast.success(t('search.itemAdded'));
       setOpen(false);
     }

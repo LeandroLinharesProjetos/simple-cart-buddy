@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -9,6 +8,7 @@ export interface ShoppingItem {
   price?: number;
   store?: string;
   address?: string;
+  purchaseDate?: string;
 }
 
 export interface ShoppingList {
@@ -26,13 +26,14 @@ interface ShoppingListContextType {
   filter: FilterType;
   setFilter: (filter: FilterType) => void;
   filteredItems: ShoppingItem[];
-  addItem: (name: string, price?: number, store?: string, address?: string) => void;
+  addItem: (name: string, price?: number, store?: string, address?: string, purchaseDate?: string) => void;
   removeItem: (id: string) => void;
   toggleItemCompletion: (id: string) => void;
   createNewList: (name: string) => void;
   removeList: (id: string) => void;
   reorderItems: (startIndex: number, endIndex: number) => void;
   activeList: ShoppingList | undefined;
+  getBestPriceForProduct: (productName: string) => number | undefined;
 }
 
 const ShoppingListContext = createContext<ShoppingListContextType | undefined>(undefined);
@@ -51,6 +52,11 @@ interface ShoppingListProviderProps {
 
 // Local storage key
 const STORAGE_KEY = "shopping-lists-data";
+
+// Map to keep track of best prices across lists
+interface BestPricesMap {
+  [productName: string]: number;
+}
 
 export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) => {
   // Initialize state from local storage or with default values
@@ -72,10 +78,42 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
   });
   
   const [filter, setFilter] = useState<FilterType>("all");
+  
+  // Track best prices for products across all lists
+  const [bestPrices, setBestPrices] = useState<BestPricesMap>(() => {
+    // Calculate initial best prices from all items in all lists
+    const prices: BestPricesMap = {};
+    lists.forEach(list => {
+      list.items.forEach(item => {
+        if (item.price !== undefined) {
+          const existingPrice = prices[item.name.toLowerCase()];
+          if (existingPrice === undefined || item.price < existingPrice) {
+            prices[item.name.toLowerCase()] = item.price;
+          }
+        }
+      });
+    });
+    return prices;
+  });
 
   // Save to local storage whenever the lists change
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(lists));
+    
+    // Update best prices whenever lists change
+    const newBestPrices: BestPricesMap = {...bestPrices};
+    lists.forEach(list => {
+      list.items.forEach(item => {
+        if (item.price !== undefined) {
+          const lowerName = item.name.toLowerCase();
+          const existingPrice = newBestPrices[lowerName];
+          if (existingPrice === undefined || item.price < existingPrice) {
+            newBestPrices[lowerName] = item.price;
+          }
+        }
+      });
+    });
+    setBestPrices(newBestPrices);
   }, [lists]);
 
   const activeList = lists.find(list => list.id === activeListId);
@@ -108,16 +146,61 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     toast.info(`Removed list: ${listToRemove.name}`);
   };
 
-  const addItem = (name: string, price?: number, store?: string, address?: string) => {
+  const addItem = (name: string, price?: number, store?: string, address?: string, purchaseDate?: string) => {
     if (!name.trim() || !activeListId) return;
     
+    const activeList = lists.find(list => list.id === activeListId);
+    if (!activeList) return;
+    
+    const normalizedName = name.trim();
+    const lowerName = normalizedName.toLowerCase();
+    
+    // Check if item with same name already exists in the list
+    const existingItemIndex = activeList.items.findIndex(
+      item => item.name.toLowerCase() === lowerName
+    );
+    
+    if (existingItemIndex >= 0) {
+      // If existing item has no price or new price is lower, update it
+      if (
+        price !== undefined && 
+        (activeList.items[existingItemIndex].price === undefined || 
+         price < activeList.items[existingItemIndex].price!)
+      ) {
+        // Update with new lower price
+        const updatedItems = [...activeList.items];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          price,
+          store: store || updatedItems[existingItemIndex].store,
+          address: address || updatedItems[existingItemIndex].address,
+          purchaseDate: purchaseDate || updatedItems[existingItemIndex].purchaseDate
+        };
+        
+        setLists(lists.map(list => 
+          list.id === activeListId 
+            ? { ...list, items: updatedItems } 
+            : list
+        ));
+        
+        toast.success(`Updated ${normalizedName} with better price: ${price}`);
+        return;
+      } else {
+        // Item exists and has same/better price, don't add duplicate
+        toast.info(`${normalizedName} is already in your list`);
+        return;
+      }
+    }
+    
+    // If we get here, item doesn't exist in the list yet
     const newItem: ShoppingItem = {
       id: Date.now().toString(),
-      name: name.trim(),
+      name: normalizedName,
       completed: false,
       price,
       store,
-      address
+      address,
+      purchaseDate
     };
     
     setLists(lists.map(list => 
@@ -126,7 +209,18 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
         : list
     ));
     
-    toast.success(`Added ${name} to your shopping list`);
+    // Update best price if this is a new lowest price
+    if (price !== undefined) {
+      const currentBestPrice = bestPrices[lowerName];
+      if (currentBestPrice === undefined || price < currentBestPrice) {
+        setBestPrices({
+          ...bestPrices,
+          [lowerName]: price
+        });
+      }
+    }
+    
+    toast.success(`Added ${normalizedName} to your shopping list`);
   };
 
   const removeItem = (id: string) => {
@@ -180,6 +274,10 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     ));
   };
 
+  const getBestPriceForProduct = (productName: string): number | undefined => {
+    return bestPrices[productName.toLowerCase()];
+  };
+
   const filteredItems = activeList?.items.filter(item => {
     if (filter === "all") return true;
     if (filter === "pending") return !item.completed;
@@ -200,7 +298,8 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     createNewList,
     removeList,
     reorderItems,
-    activeList
+    activeList,
+    getBestPriceForProduct
   };
 
   return (

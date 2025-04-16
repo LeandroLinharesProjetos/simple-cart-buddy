@@ -71,5 +71,8 @@
     "emptySearch": "Por favor, ingrese un término de búsqueda",
     "error": "Error al buscar producto",
     "itemAdded": "Producto añadido a su lista"
+  },
+  "price": {
+    "best": "Mejor"
   }
 }
