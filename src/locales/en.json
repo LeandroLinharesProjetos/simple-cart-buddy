@@ -61,5 +61,15 @@
     "price": "Price",
     "noStore": "Unknown store",
     "noAddress": "No address available"
+  },
+  "search": {
+    "title": "Search Product",
+    "placeholder": "Enter product name...",
+    "button": "Search",
+    "searching": "Searching...",
+    "addToList": "Add to List",
+    "emptySearch": "Please enter a search term",
+    "error": "Error searching for product",
+    "itemAdded": "Product added to your list"
   }
 }

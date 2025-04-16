@@ -7,6 +7,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 import ShareMenu from "@/components/ShareMenu";
 import ListSelector from "@/components/ListSelector";
 import QrCodeScanner from "@/components/QrCodeScanner";
+import SearchProduct from "@/components/SearchProduct";
 import FilterMenuWithNotes from "@/components/FilterMenuWithNotes";
 import { ShoppingBag } from "lucide-react";
 
@@ -24,6 +25,7 @@ const Index = () => {
                 <h1 className="text-2xl font-bold text-gray-800">{t('app.title')}</h1>
               </div>
               <div className="flex items-center gap-1">
+                <SearchProduct />
                 <QrCodeScanner />
                 <ShareMenu />
                 <LanguageSelector />

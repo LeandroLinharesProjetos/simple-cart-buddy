@@ -61,5 +61,15 @@
     "price": "Precio",
     "noStore": "Tienda desconocida",
     "noAddress": "No hay dirección disponible"
+  },
+  "search": {
+    "title": "Buscar Producto",
+    "placeholder": "Ingrese el nombre del producto...",
+    "button": "Buscar",
+    "searching": "Buscando...",
+    "addToList": "Añadir a la Lista",
+    "emptySearch": "Por favor, ingrese un término de búsqueda",
+    "error": "Error al buscar producto",
+    "itemAdded": "Producto añadido a su lista"
   }
 }
