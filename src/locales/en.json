@@ -11,12 +11,14 @@
     "emptyTitle": "Your shopping list is empty",
     "emptyDescription": "Add items to get started",
     "toBuy": "Items to Buy",
-    "purchased": "Purchased"
+    "purchased": "Purchased",
+    "notes": "Notes"
   },
   "filterMenu": {
     "all": "All",
     "pending": "Pending",
-    "completed": "Purchased"
+    "completed": "Purchased",
+    "notes": "Notes"
   },
   "languages": {
     "pt": "Portuguese",
@@ -49,5 +51,15 @@
     "itemsAdded": "Added {count} items from receipt",
     "itemAdded": "Item added to your list",
     "basicTextAdded": "Added text from QR code"
+  },
+  "notes": {
+    "title": "Receipt Information",
+    "empty": "No receipt information available",
+    "store": "Store",
+    "address": "Address",
+    "items": "Items",
+    "price": "Price",
+    "noStore": "Unknown store",
+    "noAddress": "No address available"
   }
 }

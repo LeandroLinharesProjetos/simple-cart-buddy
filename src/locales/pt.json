@@ -11,12 +11,14 @@
     "emptyTitle": "Sua lista de compras está vazia",
     "emptyDescription": "Adicione itens para começar",
     "toBuy": "Itens para Comprar",
-    "purchased": "Comprados"
+    "purchased": "Comprados",
+    "notes": "Notas"
   },
   "filterMenu": {
     "all": "Todos",
     "pending": "Pendentes",
-    "completed": "Comprados"
+    "completed": "Comprados",
+    "notes": "Notas"
   },
   "languages": {
     "pt": "Português",
@@ -49,5 +51,15 @@
     "itemsAdded": "Adicionados {count} itens da nota fiscal",
     "itemAdded": "Item adicionado à sua lista",
     "basicTextAdded": "Texto adicionado do código QR"
+  },
+  "notes": {
+    "title": "Informações da Nota Fiscal",
+    "empty": "Nenhuma informação de nota fiscal disponível",
+    "store": "Loja",
+    "address": "Endereço",
+    "items": "Itens",
+    "price": "Preço",
+    "noStore": "Loja desconhecida",
+    "noAddress": "Nenhum endereço disponível"
   }
 }

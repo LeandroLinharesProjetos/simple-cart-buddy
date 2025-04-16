@@ -2,13 +2,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ShoppingListProvider } from "@/context/ShoppingListContext";
-import ShoppingList from "@/components/ShoppingList";
 import AddItemForm from "@/components/AddItemForm";
 import LanguageSelector from "@/components/LanguageSelector";
-import FilterMenu from "@/components/FilterMenu";
 import ShareMenu from "@/components/ShareMenu";
 import ListSelector from "@/components/ListSelector";
 import QrCodeScanner from "@/components/QrCodeScanner";
+import FilterMenuWithNotes from "@/components/FilterMenuWithNotes";
 import { ShoppingBag } from "lucide-react";
 
 const Index = () => {
@@ -33,8 +32,7 @@ const Index = () => {
             
             <ListSelector />
             <AddItemForm />
-            <FilterMenu />
-            <ShoppingList />
+            <FilterMenuWithNotes />
           </div>
         </div>
       </div>

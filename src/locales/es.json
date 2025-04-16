@@ -11,7 +11,8 @@
     "emptyTitle": "Tu lista de compras está vacía",
     "emptyDescription": "Agrega artículos para comenzar",
     "toBuy": "Artículos para Comprar",
-    "purchased": "Comprados"
+    "purchased": "Comprados",
+    "notes": "Notas"
   },
   "languages": {
     "pt": "Portugués",
@@ -21,7 +22,8 @@
   "filterMenu": {
     "all": "Todos",
     "pending": "Pendientes",
-    "completed": "Comprados"
+    "completed": "Comprados",
+    "notes": "Notas"
   },
   "share": {
     "facebook": "Facebook",
@@ -49,5 +51,15 @@
     "itemsAdded": "Se agregaron {count} artículos del recibo",
     "itemAdded": "Artículo agregado a su lista",
     "basicTextAdded": "Texto agregado del código QR"
+  },
+  "notes": {
+    "title": "Información del Recibo",
+    "empty": "No hay información de recibo disponible",
+    "store": "Tienda",
+    "address": "Dirección",
+    "items": "Artículos",
+    "price": "Precio",
+    "noStore": "Tienda desconocida",
+    "noAddress": "No hay dirección disponible"
   }
 }
