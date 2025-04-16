@@ -1,20 +1,26 @@
 
 import React from "react";
 import { useShoppingList } from "@/context/ShoppingListContext";
-import { Check, Trash } from "lucide-react";
+import { Check, Trash, GripVertical, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ShoppingListItemProps {
   id: string;
   name: string;
   completed: boolean;
+  price?: number;
+  store?: string;
+  address?: string;
 }
 
-const ShoppingListItem = ({ id, name, completed }: ShoppingListItemProps) => {
+const ShoppingListItem = ({ id, name, completed, price, store }: ShoppingListItemProps) => {
   const { toggleItemCompletion, removeItem } = useShoppingList();
 
   return (
     <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg mb-2 bg-white hover:shadow-sm transition-shadow">
+      <div className="flex items-center gap-2">
+        <GripVertical className="h-4 w-4 text-gray-300 cursor-move" />
+      </div>
       <div className="flex items-center gap-3 flex-grow">
         <button
           onClick={() => toggleItemCompletion(id)}
@@ -28,14 +34,29 @@ const ShoppingListItem = ({ id, name, completed }: ShoppingListItemProps) => {
         >
           {completed && <Check className="h-4 w-4" />}
         </button>
-        <span 
-          className={cn(
-            "text-gray-800 transition-all", 
-            completed && "line-through text-gray-400"
+        <div className="flex flex-col">
+          <span 
+            className={cn(
+              "text-gray-800 transition-all", 
+              completed && "line-through text-gray-400"
+            )}
+          >
+            {name}
+          </span>
+          {(price !== undefined || store) && (
+            <div className="flex items-center text-xs text-gray-500 mt-1">
+              {price !== undefined && (
+                <span className="mr-2">${price.toFixed(2)}</span>
+              )}
+              {store && (
+                <div className="flex items-center">
+                  <Store className="h-3 w-3 mr-1" />
+                  <span>{store}</span>
+                </div>
+              )}
+            </div>
           )}
-        >
-          {name}
-        </span>
+        </div>
       </div>
       <button
         onClick={() => removeItem(id)}

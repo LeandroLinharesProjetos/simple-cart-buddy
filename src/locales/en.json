@@ -30,5 +30,24 @@
     "whatsapp": "WhatsApp",
     "text": "Check out my shopping list!",
     "copied": "Link copied to clipboard!"
+  },
+  "lists": {
+    "select": "Select list",
+    "createNew": "Create new list",
+    "createDescription": "Enter a name for your new shopping list",
+    "namePlaceholder": "List name"
+  },
+  "general": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "delete": "Delete"
+  },
+  "qrcode": {
+    "scanTitle": "Scan QR Code",
+    "instructions": "Point your camera at a receipt QR code",
+    "itemsAdded": "Added {count} items from receipt",
+    "itemAdded": "Item added to your list",
+    "basicTextAdded": "Added text from QR code"
   }
 }

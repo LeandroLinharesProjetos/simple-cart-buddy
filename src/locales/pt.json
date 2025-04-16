@@ -30,5 +30,24 @@
     "whatsapp": "WhatsApp",
     "text": "Confira minha lista de compras!",
     "copied": "Link copiado para a área de transferência!"
+  },
+  "lists": {
+    "select": "Selecionar lista",
+    "createNew": "Criar nova lista",
+    "createDescription": "Digite um nome para sua nova lista de compras",
+    "namePlaceholder": "Nome da lista"
+  },
+  "general": {
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "save": "Salvar",
+    "delete": "Excluir"
+  },
+  "qrcode": {
+    "scanTitle": "Digitalizar código QR",
+    "instructions": "Aponte sua câmera para um código QR de nota fiscal",
+    "itemsAdded": "Adicionados {count} itens da nota fiscal",
+    "itemAdded": "Item adicionado à sua lista",
+    "basicTextAdded": "Texto adicionado do código QR"
   }
 }
