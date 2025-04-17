@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { toast } from "sonner";
+import { useScannedItems, ScannedItem } from "@/hooks/use-scanned-items";
 
 export interface ShoppingItem {
   id: string;
@@ -34,6 +35,8 @@ interface ShoppingListContextType {
   reorderItems: (startIndex: number, endIndex: number) => void;
   activeList: ShoppingList | undefined;
   getBestPriceForProduct: (productName: string) => number | undefined;
+  scannedItems: ScannedItem[];
+  saveScannedItem: (name: string, price?: number | string, store?: string, address?: string, purchaseDate?: string) => void;
 }
 
 const ShoppingListContext = createContext<ShoppingListContextType | undefined>(undefined);
@@ -95,6 +98,8 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     });
     return prices;
   });
+
+  const { scannedItems, saveScannedItem } = useScannedItems();
 
   // Save to local storage whenever the lists change
   useEffect(() => {
@@ -299,7 +304,9 @@ export const ShoppingListProvider = ({ children }: ShoppingListProviderProps) =>
     removeList,
     reorderItems,
     activeList,
-    getBestPriceForProduct
+    getBestPriceForProduct,
+    scannedItems,
+    saveScannedItem
   };
 
   return (

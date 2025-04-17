@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 
 const QrCodeScanner = () => {
   const { t } = useTranslation();
-  const { activeList, saveScannedItem } = useShoppingList(); // Modificado: usar saveScannedItem em vez de addItem
+  const { saveScannedItem } = useShoppingList();
   const [open, setOpen] = useState(false);
 
   const onNewScanResult = (decodedText: string) => {
