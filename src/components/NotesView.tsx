@@ -6,6 +6,7 @@ import { Store, MapPin, ShoppingBag, Receipt, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { format } from 'date-fns';
 
 const NotesView = () => {
@@ -20,10 +21,8 @@ const NotesView = () => {
       const address = item.address || t('notes.noAddress');
       const date = item.purchaseDate;
       
-      // Create a unique key for grouping by store, address and date
       const key = `${store}-${address}-${date || ''}`;
       
-      // Check if we already have this store+date combo in our array
       const existingStoreIndex = stores.findIndex(s => 
         s.store === store && 
         s.address === address && 
@@ -77,32 +76,34 @@ const NotesView = () => {
               )}
             </CardHeader>
             <CardContent>
-              <p className="text-sm font-medium text-gray-500 mb-2 flex items-center">
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                {t('notes.items')}:
-              </p>
-              <div className="space-y-2">
-                {storeInfo.items.map((item, itemIndex) => (
-                  <div key={itemIndex} className="text-sm">
-                    <div className="flex justify-between">
-                      <span>{item.name}</span>
-                      {item.price && (
-                        <span className="font-medium">
-                          {typeof item.price === 'number'
-                            ? new Intl.NumberFormat(undefined, {
-                                style: 'currency',
-                                currency: 'USD'
-                              }).format(item.price)
-                            : item.price}
-                        </span>
-                      )}
-                    </div>
-                    {itemIndex < storeInfo.items.length - 1 && (
-                      <Separator className="my-2" />
-                    )}
-                  </div>
-                ))}
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('notes.items')}</TableHead>
+                    <TableHead className="text-right">{t('notes.price')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Ordenar itens alfabeticamente pelo nome */}
+                  {storeInfo.items
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((item, itemIndex) => (
+                      <TableRow key={itemIndex}>
+                        <TableCell>{item.name}</TableCell>
+                        <TableCell className="text-right">
+                          {item.price
+                            ? typeof item.price === 'number'
+                              ? new Intl.NumberFormat(undefined, {
+                                  style: 'currency',
+                                  currency: 'USD'
+                                }).format(item.price)
+                              : item.price
+                            : '-'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         ))}
