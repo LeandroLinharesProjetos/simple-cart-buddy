@@ -17,20 +17,19 @@ import { toast } from 'sonner';
 
 const QrCodeScanner = () => {
   const { t } = useTranslation();
-  const { addItem } = useShoppingList();
+  const { activeList, saveScannedItem } = useShoppingList(); // Modificado: usar saveScannedItem em vez de addItem
   const [open, setOpen] = useState(false);
 
   const onNewScanResult = (decodedText: string) => {
     try {
       // Attempt to parse the QR code data
-      // This is a simplified example - real receipt QR codes would have a specific format
       const data = JSON.parse(decodedText);
       const currentDate = new Date().toISOString();
       
       if (data.items && Array.isArray(data.items)) {
-        // Add each item from the receipt
+        // Salvar cada item do recibo sem adicionar à lista de compras
         data.items.forEach((item: any) => {
-          addItem(
+          saveScannedItem(
             item.name || 'Unknown item',
             item.price,
             data.store || '',
@@ -39,21 +38,21 @@ const QrCodeScanner = () => {
           );
         });
         
-        toast.success(t('qrcode.itemsAdded', { count: data.items.length }));
+        toast.success(t('qrcode.itemsScanned', { count: data.items.length }));
       } else {
-        // If it's a simple text, just add as an item
-        addItem(decodedText, undefined, '', '', currentDate);
-        toast.success(t('qrcode.itemAdded'));
+        // Se for um texto simples, salvar como um item
+        saveScannedItem(decodedText, undefined, '', '', currentDate);
+        toast.success(t('qrcode.itemScanned'));
       }
       
       setOpen(false);
     } catch (error) {
       console.error('Failed to parse QR code data:', error);
       
-      // If parsing fails, just add as text
+      // Se a análise falhar, apenas salvar como texto
       const currentDate = new Date().toISOString();
-      addItem(decodedText, undefined, '', '', currentDate);
-      toast.info(t('qrcode.basicTextAdded'));
+      saveScannedItem(decodedText, undefined, '', '', currentDate);
+      toast.info(t('qrcode.basicTextScanned'));
       setOpen(false);
     }
   };

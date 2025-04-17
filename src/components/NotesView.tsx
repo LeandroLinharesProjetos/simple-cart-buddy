@@ -11,11 +11,15 @@ import { format } from 'date-fns';
 
 const NotesView = () => {
   const { t } = useTranslation();
-  const { activeList } = useShoppingList();
+  const { activeList, scannedItems } = useShoppingList();
+  
+  // Usar itens escaneados se disponíveis, ou filtrar itens da lista ativa
+  // que tenham informações de loja ou endereço
+  const itemsToDisplay = scannedItems || 
+    (activeList?.items.filter(item => item.store || item.address) || []);
   
   // Get unique stores from items with store info
-  const storesWithInfo = activeList?.items
-    .filter(item => item.store || item.address)
+  const storesWithInfo = itemsToDisplay
     .reduce((stores: { store: string; address: string; date?: string; items: any[] }[], item) => {
       const store = item.store || t('notes.noStore');
       const address = item.address || t('notes.noAddress');
