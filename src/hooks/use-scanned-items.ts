@@ -19,13 +19,20 @@ export const useScannedItems = () => {
   useEffect(() => {
     const storedItems = localStorage.getItem('scannedItems');
     if (storedItems) {
-      setScannedItems(JSON.parse(storedItems));
+      try {
+        const parsedItems = JSON.parse(storedItems);
+        console.log("Loaded scanned items from localStorage:", parsedItems);
+        setScannedItems(parsedItems);
+      } catch (error) {
+        console.error("Error parsing scanned items from localStorage:", error);
+      }
     }
   }, []);
 
   // Salvar itens no localStorage quando houver mudanças
   useEffect(() => {
     if (scannedItems.length > 0) {
+      console.log("Saving scanned items to localStorage:", scannedItems);
       localStorage.setItem('scannedItems', JSON.stringify(scannedItems));
     }
   }, [scannedItems]);
@@ -38,6 +45,8 @@ export const useScannedItems = () => {
     address: string = '',
     purchaseDate: string = new Date().toISOString()
   ) => {
+    console.log("Saving new scanned item:", { name, price, store, address });
+    
     const newItem: ScannedItem = {
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       name,

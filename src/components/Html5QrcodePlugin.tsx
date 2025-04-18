@@ -29,8 +29,13 @@ const Html5QrcodePlugin = ({
     const html5QrCode = new Html5Qrcode(qrcodeRegionId);
     html5QrCodeRef.current = html5QrCode;
 
+    console.log("Starting QR code scanner...");
+
     // Configuração personalizada para silenciar erros repetitivos do QR code scanner
     const errorCallback = (error: string) => {
+      // Log all errors for debugging
+      console.log("QR Code scanner error:", error);
+      
       // Filtrar apenas erros importantes, ignorando os erros comuns de IndexSizeError e NotFoundException
       if (!error.includes('IndexSizeError') && !error.includes('NotFoundException')) {
         if (qrCodeErrorCallback) {
@@ -41,11 +46,14 @@ const Html5QrcodePlugin = ({
       }
     };
 
-    // Start scanning
+    // Start scanning with improved error handling
     html5QrCode.start(
       { facingMode: "environment" },
       config,
-      qrCodeSuccessCallback,
+      (decodedText: string, decodedResult: any) => {
+        console.log("QR code detected:", decodedText);
+        qrCodeSuccessCallback(decodedText, decodedResult);
+      },
       errorCallback
     ).catch((err) => {
       console.error("Error starting QR Code scanner", err);

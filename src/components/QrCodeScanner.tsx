@@ -20,8 +20,10 @@ const QrCodeScanner = () => {
   const { saveScannedItem } = useShoppingList();
   const [open, setOpen] = useState(false);
 
-  const onNewScanResult = (decodedText: string) => {
+  const onNewScanResult = (decodedText: string, decodedResult: any) => {
     try {
+      console.log("QR Code scanned successfully:", decodedText);
+      
       // Attempt to parse the QR code data
       const data = JSON.parse(decodedText);
       const currentDate = new Date().toISOString();
