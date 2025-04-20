@@ -6,7 +6,7 @@ const qrcodeRegionId = "html5qr-code-full-region";
 
 interface Html5QrcodePluginProps {
   fps?: number;
-  qrbox?: number;
+  qrbox?: number | { width: number; height: number };
   disableFlip?: boolean;
   qrCodeSuccessCallback: (decodedText: string, decodedResult: any) => void;
   qrCodeErrorCallback?: (errorMessage: string) => void;
@@ -23,44 +23,75 @@ const Html5QrcodePlugin = ({
 
   useEffect(() => {
     // when component mounts
-    const config = { fps, qrbox, disableFlip };
-    
-    // Creates an instance of Html5Qrcode
-    const html5QrCode = new Html5Qrcode(qrcodeRegionId);
-    html5QrCodeRef.current = html5QrCode;
+    let html5QrCode: Html5Qrcode;
 
-    console.log("Starting QR code scanner...");
-
-    // Configuração personalizada para silenciar erros repetitivos do QR code scanner
-    const errorCallback = (error: string) => {
-      // Log all errors for debugging
-      console.log("QR Code scanner error:", error);
-      
-      // Filtrar apenas erros importantes, ignorando os erros comuns de IndexSizeError e NotFoundException
-      if (!error.includes('IndexSizeError') && !error.includes('NotFoundException')) {
-        if (qrCodeErrorCallback) {
-          qrCodeErrorCallback(error);
-        } else {
-          console.error("QR Code scanner error:", error);
+    // Espera um momento para garantir que o DOM está totalmente renderizado
+    const initTimeout = setTimeout(() => {
+      try {
+        // Certifique-se de que o elemento existe
+        const element = document.getElementById(qrcodeRegionId);
+        if (!element) {
+          console.error("QR code container element not found");
+          return;
         }
-      }
-    };
 
-    // Start scanning with improved error handling
-    html5QrCode.start(
-      { facingMode: "environment" },
-      config,
-      (decodedText: string, decodedResult: any) => {
-        console.log("QR code detected:", decodedText);
-        qrCodeSuccessCallback(decodedText, decodedResult);
-      },
-      errorCallback
-    ).catch((err) => {
-      console.error("Error starting QR Code scanner", err);
-    });
+        // Creates an instance of Html5Qrcode
+        html5QrCode = new Html5Qrcode(qrcodeRegionId);
+        html5QrCodeRef.current = html5QrCode;
+        
+        console.log("Starting QR code scanner...");
+
+        // Ajuste o tamanho do qrbox para ser responsivo
+        const qrboxSize = typeof qrbox === 'number' 
+          ? Math.min(qrbox, Math.min(element.offsetWidth, element.offsetHeight) - 10) 
+          : qrbox;
+          
+        // Configuração para melhor desempenho
+        const config = { 
+          fps, 
+          qrbox: qrboxSize,
+          disableFlip,
+          aspectRatio: 1.0,
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+          }
+        };
+
+        // Configuração personalizada para silenciar erros repetitivos do QR code scanner
+        const errorCallback = (error: string) => {
+          // Log all errors for debugging
+          console.log("QR Code scanner error:", error);
+          
+          // Filtrar apenas erros importantes, ignorando os erros comuns de IndexSizeError e NotFoundException
+          if (!error.includes('IndexSizeError') && !error.includes('NotFoundException')) {
+            if (qrCodeErrorCallback) {
+              qrCodeErrorCallback(error);
+            } else {
+              console.error("QR Code scanner error:", error);
+            }
+          }
+        };
+
+        // Start scanning with improved error handling
+        html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          (decodedText: string, decodedResult: any) => {
+            console.log("QR code detected:", decodedText);
+            qrCodeSuccessCallback(decodedText, decodedResult);
+          },
+          errorCallback
+        ).catch((err) => {
+          console.error("Error starting QR Code scanner", err);
+        });
+      } catch (err) {
+        console.error("Failed to initialize QR code scanner:", err);
+      }
+    }, 500); // Pequeno atraso para garantir que o DOM está pronto
 
     // cleanup function when component unmounts
     return () => {
+      clearTimeout(initTimeout);
       if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
         html5QrCodeRef.current.stop().then(() => {
           console.log('QR Code scanner stopped');

@@ -14,18 +14,21 @@ export interface ScannedItem {
 
 export const useScannedItems = () => {
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
+  
+  // Chave para o localStorage
+  const STORAGE_KEY = 'scannedItems';
 
   // Carregar itens escaneados do localStorage ao inicializar
   useEffect(() => {
-    const storedItems = localStorage.getItem('scannedItems');
-    if (storedItems) {
-      try {
+    try {
+      const storedItems = localStorage.getItem(STORAGE_KEY);
+      if (storedItems) {
         const parsedItems = JSON.parse(storedItems);
         console.log("Loaded scanned items from localStorage:", parsedItems);
         setScannedItems(parsedItems);
-      } catch (error) {
-        console.error("Error parsing scanned items from localStorage:", error);
       }
+    } catch (error) {
+      console.error("Error loading scanned items from localStorage:", error);
     }
   }, []);
 
@@ -33,7 +36,11 @@ export const useScannedItems = () => {
   useEffect(() => {
     if (scannedItems.length > 0) {
       console.log("Saving scanned items to localStorage:", scannedItems);
-      localStorage.setItem('scannedItems', JSON.stringify(scannedItems));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scannedItems));
+      } catch (error) {
+        console.error("Error saving scanned items to localStorage:", error);
+      }
     }
   }, [scannedItems]);
 
@@ -57,7 +64,10 @@ export const useScannedItems = () => {
       completed: false
     };
 
-    setScannedItems(prevItems => [...prevItems, newItem]);
+    setScannedItems(prevItems => {
+      const updatedItems = [...prevItems, newItem];
+      return updatedItems;
+    });
   };
 
   return {
