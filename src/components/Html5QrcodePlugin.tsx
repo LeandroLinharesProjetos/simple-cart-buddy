@@ -22,8 +22,10 @@ const Html5QrcodePlugin = ({
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
-    // when component mounts
-    let html5QrCode: Html5Qrcode;
+    // Clear any previous instance
+    if (html5QrCodeRef.current?.isScanning) {
+      html5QrCodeRef.current.stop().catch(console.error);
+    }
 
     // Espera um momento para garantir que o DOM está totalmente renderizado
     const initTimeout = setTimeout(() => {
@@ -36,17 +38,23 @@ const Html5QrcodePlugin = ({
         }
 
         // Creates an instance of Html5Qrcode
-        html5QrCode = new Html5Qrcode(qrcodeRegionId);
+        const html5QrCode = new Html5Qrcode(qrcodeRegionId, { verbose: true });
         html5QrCodeRef.current = html5QrCode;
         
-        console.log("Starting QR code scanner...");
+        console.log("Starting QR code scanner with enhanced configuration...");
 
-        // Ajuste o tamanho do qrbox para ser responsivo
+        // Calcular o tamanho responsivo para qrbox
+        const containerWidth = element.clientWidth || 300;
+        const containerHeight = element.clientHeight || 300;
+        const minDimension = Math.min(containerWidth, containerHeight);
         const qrboxSize = typeof qrbox === 'number' 
-          ? Math.min(qrbox, Math.min(element.offsetWidth, element.offsetHeight) - 10) 
-          : qrbox;
-          
-        // Configuração para melhor desempenho
+          ? Math.min(qrbox, minDimension - 10) 
+          : { 
+              width: Math.min(qrbox.width, minDimension - 10),
+              height: Math.min(qrbox.height, minDimension - 10)
+            };
+
+        // Configuração avançada
         const config = { 
           fps, 
           qrbox: qrboxSize,
@@ -54,20 +62,24 @@ const Html5QrcodePlugin = ({
           aspectRatio: 1.0,
           experimentalFeatures: {
             useBarCodeDetectorIfSupported: true
-          }
+          },
+          rememberLastUsedCamera: true,
+          supportedScanTypes: [Html5Qrcode.SCAN_TYPE_CAMERA]
         };
 
-        // Configuração personalizada para silenciar erros repetitivos do QR code scanner
+        console.log("QR Scanner config:", config);
+
+        // Configuração personalizada para erros
         const errorCallback = (error: string) => {
-          // Log all errors for debugging
           console.log("QR Code scanner error:", error);
           
-          // Filtrar apenas erros importantes, ignorando os erros comuns de IndexSizeError e NotFoundException
-          if (!error.includes('IndexSizeError') && !error.includes('NotFoundException')) {
+          // Filter out common errors that aren't relevant to users
+          if (!error.includes('NotFoundException') && 
+              !error.includes('IndexSizeError') && 
+              !error.includes('NotAllowedError: The request is not allowed') && 
+              !error.includes('NotFoundError: Requested device not found')) {
             if (qrCodeErrorCallback) {
               qrCodeErrorCallback(error);
-            } else {
-              console.error("QR Code scanner error:", error);
             }
           }
         };
@@ -77,17 +89,17 @@ const Html5QrcodePlugin = ({
           { facingMode: "environment" },
           config,
           (decodedText: string, decodedResult: any) => {
-            console.log("QR code detected:", decodedText);
+            console.log("QR code detected successfully:", decodedText);
             qrCodeSuccessCallback(decodedText, decodedResult);
           },
           errorCallback
         ).catch((err) => {
-          console.error("Error starting QR Code scanner", err);
+          console.error("Error starting QR Code scanner:", err);
         });
       } catch (err) {
         console.error("Failed to initialize QR code scanner:", err);
       }
-    }, 500); // Pequeno atraso para garantir que o DOM está pronto
+    }, 800); // Aumento do atraso para garantir que o DOM esteja completamente pronto
 
     // cleanup function when component unmounts
     return () => {
@@ -104,7 +116,7 @@ const Html5QrcodePlugin = ({
 
   return (
     <div>
-      <div id={qrcodeRegionId} className="w-full h-64 bg-gray-100 rounded-md overflow-hidden" />
+      <div id={qrcodeRegionId} className="w-full h-72 bg-gray-100 rounded-md overflow-hidden" />
     </div>
   );
 };

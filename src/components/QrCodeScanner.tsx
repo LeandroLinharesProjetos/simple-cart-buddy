@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Scan, X } from 'lucide-react';
 import { useShoppingList } from '@/context/ShoppingListContext';
@@ -19,19 +19,20 @@ const QrCodeScanner = () => {
   const { t } = useTranslation();
   const { saveScannedItem } = useShoppingList();
   const [open, setOpen] = useState(false);
+  const [scanActive, setScanActive] = useState(false);
 
-  const onNewScanResult = (decodedText: string, decodedResult: any) => {
-    console.log("QR Code scanned successfully:", decodedText);
+  const onNewScanResult = useCallback((decodedText: string, decodedResult: any) => {
+    console.log("📱 QR Code scanned successfully:", decodedText);
     
     try {
       // Tentar parsear o texto como JSON
       let parsedData;
       try {
         parsedData = JSON.parse(decodedText);
-        console.log("Parsed QR code data:", parsedData);
+        console.log("Parsed QR code JSON data:", parsedData);
       } catch (parseError) {
-        console.warn("Failed to parse QR code as JSON, treating as plain text:", parseError);
-        // Se falhar ao parsear como JSON, apenas use o texto como está
+        console.warn("Not JSON format, using plain text:", decodedText);
+        // Se não for JSON, usar o texto como nome do item
         const currentDate = new Date().toISOString();
         saveScannedItem(decodedText, undefined, '', '', currentDate);
         toast.success(t('qrcode.basicTextScanned'));
@@ -43,7 +44,8 @@ const QrCodeScanner = () => {
       
       // Processar dados em formato JSON
       if (parsedData.items && Array.isArray(parsedData.items)) {
-        // Salvar cada item do recibo sem adicionar à lista de compras
+        // Formato de recibo com múltiplos itens
+        console.log("Processing receipt with multiple items:", parsedData.items);
         parsedData.items.forEach((item: any) => {
           saveScannedItem(
             item.name || 'Unknown item',
@@ -55,32 +57,53 @@ const QrCodeScanner = () => {
         });
         
         toast.success(t('qrcode.itemsScanned', { count: parsedData.items.length }));
-      } else {
-        // Se não for um formato de recibo conhecido, salvar como um item único
+      } else if (parsedData.name || parsedData.text) {
+        // Item único em formato JSON
+        console.log("Processing single item:", parsedData);
         saveScannedItem(
-          parsedData.name || parsedData.text || decodedText,
+          parsedData.name || parsedData.text,
           parsedData.price,
           parsedData.store || '',
           parsedData.address || '',
           currentDate
         );
         toast.success(t('qrcode.itemScanned'));
+      } else {
+        // JSON sem formato reconhecido, usar como texto
+        console.log("Unknown JSON format, using as text");
+        saveScannedItem(
+          JSON.stringify(parsedData).substring(0, 50),
+          undefined,
+          '',
+          '',
+          currentDate
+        );
+        toast.success(t('qrcode.basicTextScanned'));
       }
       
       setOpen(false);
     } catch (error) {
       console.error('Failed to process QR code data:', error);
       
-      // Se ocorrer qualquer outro erro, salvar como texto simples
+      // Em caso de erro, salvar como texto simples
       const currentDate = new Date().toISOString();
       saveScannedItem(decodedText, undefined, '', '', currentDate);
       toast.info(t('qrcode.basicTextScanned'));
       setOpen(false);
     }
+  }, [saveScannedItem, t]);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (newOpen) {
+      setScanActive(true);
+    } else {
+      setScanActive(false);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Scan className="h-5 w-5 text-teal-500 hover:text-teal-600 transition-colors" />
@@ -96,12 +119,14 @@ const QrCodeScanner = () => {
         </DialogHeader>
         
         <div className="mt-2 w-full">
-          <Html5QrcodePlugin
-            fps={10}
-            qrbox={{ width: 250, height: 250 }}
-            disableFlip={false}
-            qrCodeSuccessCallback={onNewScanResult}
-          />
+          {scanActive && (
+            <Html5QrcodePlugin
+              fps={15}
+              qrbox={{ width: 270, height: 270 }}
+              disableFlip={false}
+              qrCodeSuccessCallback={onNewScanResult}
+            />
+          )}
           <p className="text-sm text-gray-500 mt-2 text-center">
             {t('qrcode.instructions')}
           </p>
